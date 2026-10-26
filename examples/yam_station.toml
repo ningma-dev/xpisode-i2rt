@@ -1,0 +1,47 @@
+# One YAM leader-follower pair as an xpisode station: the follower on can1, the leader
+# (teaching handle) on can0, the reference teleop client between them (teleop.toml, in the
+# same directory; commands run there).
+#
+#     uv run xpisode run stations/yam/yam_station.toml   (from your station project)
+
+station = "yam"
+control_hz = 100
+required_streams = ["/follower/state", "/leader/input"]
+
+[[devices]]
+name = "follower"
+command = ["xpisode-device", "run", "--station", "{station}", "--name", "{name}",
+           "--factory", "xpisode_i2rt:YamFollower", "--config", '{"channel": "can1"}']
+
+[[devices]]
+name = "leader"
+command = ["xpisode-device", "run", "--station", "{station}", "--name", "{name}",
+           "--factory", "xpisode_i2rt:YamLeader", "--config", '{"channel": "can0"}']
+
+[groups.arm]
+endpoints = ["follower/joint_position"]
+holder = "teleop"
+
+# The teleop client drives the leader to follow the arm while somebody else drives the arm.
+[groups.leader]
+endpoints = ["leader/joint_position"]
+holder = "teleop"
+
+# The leader's buttons: button 0 switches the arm between the teleop client
+# and whoever had it before (a policy); button 1 starts and ends a recording.
+[[inputs]]
+stream = "leader/input"
+field = "buttons"
+index = 0
+operation = "switch"
+groups = ["arm"]
+
+[[inputs]]
+stream = "leader/input"
+field = "buttons"
+index = 1
+operation = "record"
+
+[[clients]]
+name = "teleop"
+command = ["python", "-m", "xpisode_env.teleop", "--station", "{station}", "--name", "{name}", "--config", "teleop.toml"]

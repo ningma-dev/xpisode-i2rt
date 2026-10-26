@@ -1,0 +1,24 @@
+# The xpisode reference teleop client, mapping the teaching handle to the follower as
+# minimum_gello does: joints one to one, gripper opening = 1 - trigger. While it has the arm,
+# the follower follows the leader; while it does not, the leader follows the follower
+#. Getting the arm, it first brings the leader to the follower, at
+# align_speed, the follower holding still; the gripper goes to the trigger meanwhile.
+group = "arm"
+leader_group = "leader"
+align_speed = 0.5
+
+[[follow]]
+target = "follower/joint_position/joint_pos"
+source = "leader/input/joint_pos"
+state = "follower/state/joint_pos"
+
+[[follow]]
+target = "follower/joint_position/gripper_pos"
+source = "leader/input/trigger"
+state = "follower/state/gripper_pos"
+scale = -1.0
+offset = 1.0
+
+[[mirror]]
+target = "leader/joint_position/joint_pos"
+source = "follower/state/joint_pos"

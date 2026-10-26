@@ -1,0 +1,33 @@
+[project]
+name = "station"
+version = "0"
+requires-python = ">=3.12"
+dependencies = [
+  "xpisode==0.1.0",
+  "xpisode-format==0.1.0",
+  "xpisode-device==0.1.0",
+  "xpisode-env==0.1.0",
+  "xpisode-i2rt==0.1.0",
+  "i2rt>=1.1.2,<2",
+]
+
+[tool.uv]
+package = false
+build-constraint-dependencies = ["scikit-build-core<0.10"]
+
+[tool.xpisode]
+data = "data"
+
+[[tool.uv.index]]
+name = "wheels"
+url = "./wheels"
+format = "flat"
+explicit = true
+
+[tool.uv.sources]
+xpisode = { index = "wheels" }
+xpisode-format = { index = "wheels" }
+xpisode-device = { index = "wheels" }
+xpisode-env = { index = "wheels" }
+xpisode-i2rt = { index = "wheels" }
+i2rt = { url = "https://github.com/ningma-dev/i2rt/archive/dc2f358fd9be0448b45e0aa5a94bbefaec22d116.tar.gz" }
