@@ -14,7 +14,9 @@ The other arm and gripper names accepted by the SDK are not validated by this ad
 
 ## Install and try it
 
-Follow [Install a station from source](docs/installation.md). It creates a complete station project, installs the core and adapter, and copies both simulator and hardware configurations.
+Running a station requires access to the private xpisode core repository or core wheel files supplied by the maintainer. The adapter is public; the core and its SDKs are not on PyPI.
+
+Follow [Install a station](docs/installation.md). It creates a complete station project, installs the core and adapter, and copies both simulator and hardware configurations.
 
 From that station project, start the supplied simulator:
 
@@ -33,7 +35,7 @@ uv run xpisode shutdown --station yam_sim
 uv run xpisode verify data/yam_sim/episodes
 ```
 
-The example uses I2RT's MuJoCo follower and a moving demonstration handle. It opens no CAN interfaces. For development of the adapter alone, clone this repository and run `uv sync --python 3.12`; the pinned SDK sources in `pyproject.toml` and `uv.lock` are fetched automatically.
+The example uses I2RT's MuJoCo follower and a moving demonstration handle. It opens no CAN interfaces. For development of the adapter alone, clone this repository and run `uv sync --python 3.12`; the pinned SDK sources in `pyproject.toml` and `uv.lock` are fetched using your Git credentials, which must have access to the private core repository.
 
 ## Connect real arms
 
