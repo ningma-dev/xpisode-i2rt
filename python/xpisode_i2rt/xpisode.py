@@ -66,9 +66,17 @@ def _scalar(name: str, unit: str, description: str) -> Field:
 
 
 def _observation(fields_: Sequence[Field], hz: float, role: Role = Role.OBSERVATION) -> Stream:
-    # The controller keeps the newest state; read() samples it, so the time is when it was read.
+    # The real-time core publishes a state at the start of each cycle from the replies that came
+    # in during the cycle before; the time is that start, on the host's CLOCK_MONOTONIC.
     spec = RecordStream(
-        role=role, time_meaning=TimeMeaning.READ, fields=tuple(fields_), nominal_hz=hz
+        role=role,
+        time_meaning=TimeMeaning.RECEIVE,
+        fields=tuple(fields_),
+        nominal_hz=hz,
+        description=(
+            "Stamped when the real-time core published the state: the start of its cycle; "
+            "each motor's reply arrived within the cycle before."
+        ),
     )
     return Stream(spec, poll_hz=hz)
 
@@ -126,6 +134,7 @@ class _Yam(Device):
             **{k: tuple(v) if isinstance(v, list) else v for k, v in merged.items()}
         )
         self._clock: Clock | None = None
+        self._last_cycle: int | None = None
         self._core: Core | None = None
         self._offsets: list[float] = [0.0] * arm.DOF
         self._park_joints: np.ndarray | None = None
@@ -395,14 +404,19 @@ class YamFollower(_Yam):
             },
         )
 
-    def read(self, stream: str) -> Reading:
+    def read(self, stream: str) -> Reading | None:
+        """The state the real-time core published last, stamped when it was published; a cycle
+        already read is nothing new."""
         assert self._clock is not None and self._limits is not None
         self.core.check()
         state = self.core.state()
+        if state["cycles"] == self._last_cycle:
+            return None
+        self._last_cycle = state["cycles"]
         dof = arm.DOF
         closed, opened = self._limits
         return Reading(
-            self._clock.now_ns(),
+            int(state["time_ns"]),
             (
                 state["position"][:dof],
                 state["velocity"][:dof],
@@ -475,7 +489,6 @@ class YamLeader(_Yam):
     ) -> None:
         super().__init__(channel, poll_hz, park_pose, park_seconds, tuned, settings)
         self._trigger_range = float(arm.spec()["handle"]["range_rad"])
-        self._last_cycle: int | None = None
 
     def _encoder_id(self) -> int | None:
         return int(arm.spec()["handle"]["encoder_id"])
@@ -566,7 +579,7 @@ class YamLeader(_Yam):
         trigger = min(abs(state["encoder_position"]) / self._trigger_range, 1.0)
         inputs = state["encoder_inputs"]
         return Reading(
-            self._clock.now_ns(),
+            int(state["time_ns"]),
             (
                 state["position"][: arm.DOF],
                 np.array([trigger]),

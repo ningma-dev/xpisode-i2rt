@@ -54,7 +54,8 @@ class FakeCore:
             "encoder_position": -0.35,
             "encoder_inputs": 2,
             "encoder_age_s": 0.2,
-            "cycles": self.next_cycle(),
+            "cycles": (cycle := self.next_cycle()),
+            "time_ns": 1_000_000 * cycle,
         }
 
     def next_cycle(self) -> int:
@@ -271,3 +272,13 @@ def test_a_leader_reads_each_controller_cycle_once() -> None:
     assert device.read("input") is None, "the same cycle again is nothing new"
     state = {**state, "cycles": state["cycles"] + 1}
     assert device.read("input") is not None
+
+
+def test_states_are_stamped_when_the_real_time_core_published_them() -> None:
+    device, core = _follower()
+    reading = device.read("state")
+    assert reading is not None
+    assert reading.time_ns == 1_000_000 * core.cycle
+    assert all(
+        stream.spec.time_meaning.value == "receive" for stream in device.describe().streams.values()
+    )
