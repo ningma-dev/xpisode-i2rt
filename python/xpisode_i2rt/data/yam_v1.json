@@ -1,0 +1,92 @@
+{
+ "source": "i2rt 1.1.2, robots/config/yam_v1.yml and linear_4310.yml; models by combine_arm_and_gripper_xml",
+ "joint_limit_margin": 0.15,
+ "joint_limits": [
+  [
+   -2.61799,
+   3.14159
+  ],
+  [
+   0.0,
+   3.66519
+  ],
+  [
+   0.0,
+   3.14159
+  ],
+  [
+   -1.69297,
+   1.5708
+  ],
+  [
+   -1.5708,
+   1.5708
+  ],
+  [
+   -2.0944,
+   2.0944
+  ]
+ ],
+ "motors": [
+  "DM4340",
+  "DM4340",
+  "DM4340",
+  "DM4310",
+  "DM4310",
+  "DM4310"
+ ],
+ "kp": [
+  80,
+  80,
+  80,
+  10,
+  10,
+  10
+ ],
+ "kd": [
+  5,
+  5,
+  5,
+  1.5,
+  1.5,
+  1.5
+ ],
+ "gravity_factor": [
+  1,
+  1.1,
+  1.1,
+  1.2,
+  1,
+  1
+ ],
+ "float_kd": [
+  0.1,
+  0.1,
+  0.1,
+  0.3,
+  0.05,
+  0.05
+ ],
+ "gripper": {
+  "motor": "DM4310",
+  "id": 7,
+  "direction": 1,
+  "kp": 20,
+  "kd": 0.5,
+  "max_force": 50.0,
+  "clog_force": 0.5,
+  "clog_speed": 0.3,
+  "sign": 1.0,
+  "motor_stroke": 6.57,
+  "gripper_stroke": 0.096
+ },
+ "handle": {
+  "encoder_id": 1294,
+  "range_rad": 0.7,
+  "firmware": [
+   2,
+   2,
+   12
+  ]
+ }
+}

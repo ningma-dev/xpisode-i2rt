@@ -1,0 +1,29 @@
+[project]
+name = "xpisode-i2rt"
+version = "0.1.0"
+description = "A real-time controller for I2RT YAM arms, and those arms as xpisode devices."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+  "mujoco>=3",
+  "numpy>=1.24",
+  "xpisode-device[iox]>=0.1.0,<0.2",
+  "xpisode-format>=0.1.0,<0.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3"]
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["python/xpisode_i2rt"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["target"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
