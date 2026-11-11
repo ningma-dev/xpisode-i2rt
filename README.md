@@ -2,8 +2,8 @@
 
 A real-time controller for I2RT YAM arms, and those arms as [xpisode](https://github.com/ningma-dev/xpisode)
 devices. One process per CAN bus, in Rust, with no Python on the path to the motors; it knows MIT
-frames, a serial chain and targets, and nothing about xpisode. This repository needs neither i2rt nor
-xpisode-i2rt: the models and numbers it took from i2rt are in `python/xpisode_i2rt/data`, under
+frames, a serial chain and targets, and nothing about xpisode. This repository does not need i2rt
+installed: the models and numbers it took from i2rt are in `python/xpisode_i2rt/data`, under
 i2rt's license (`data/LICENSE.i2rt`).
 
 ## Set up a machine
@@ -50,7 +50,9 @@ is still yours.
 "--config", '{"channel": "can_leader_r"}'
 ```
 
-Without a `gripper_limits` or a tuned file that has them, opening drives the gripper to both stops.
+The `tuned` path is relative to the station file, whose commands run in its directory: a station in
+`stations/` reads `stations/tuned/can_follower_r.json`. Without a `gripper_limits` or a tuned file
+that has them, opening drives the gripper to both stops.
 What the controller was given and got goes into the Episode header.
 
 ## How it works

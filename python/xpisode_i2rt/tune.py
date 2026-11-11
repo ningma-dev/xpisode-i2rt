@@ -6,12 +6,13 @@ The station must not be running, and the arm must start at rest. It goes through
 of xpisode_i2rt.bench_motion, the same on every arm.
 
     python -m xpisode_i2rt.tune can_follower_r --plan            # what it would do; nothing moves
-    python -m xpisode_i2rt.tune can_follower_r --i-am-at-the-arm
+    python -m xpisode_i2rt.tune can_follower_r --i-am-at-the-arm --out stations/tuned/can_follower_r.json
 
 It measures friction and gravity from torque, then tries higher gains and inertia feedforward, one
 at a time, with leader-like targets, on poses it did not fit on. What it keeps must track better and
-not be louder, and a joint that starts to oscillate ends that climb at once. It writes
-stations/tuned/<channel>.json, which the station reads; every trial's numbers go in there too.
+not be louder, and a joint that starts to oscillate ends that climb at once. It writes the file
+given with --out, such as stations/tuned/<channel>.json, which the station's device reads through
+``tuned``; every trial's numbers go in there too.
 """
 
 import argparse
